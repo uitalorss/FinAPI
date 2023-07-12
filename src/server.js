@@ -22,3 +22,12 @@ app.post("/account", (req, res) => {
   })
   return res.status(201).send();
 })
+
+app.get("/history/:cpf", (req, res) => {
+  const {cpf} = req.params;
+  const customer = customers.find((customer) => customer.cpf === cpf);
+  if(!customer){
+    return res.status(400).send("Cliente não encontrado.")
+  }
+  return res.json(customer.history)
+}) 
