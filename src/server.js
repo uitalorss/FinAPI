@@ -44,8 +44,17 @@ app.post("/account", (req, res) => {
 })
 
 app.get("/history", verifyAccountCPF, (req, res) => {
-  const { customer } = req
+  const { customer } = req;
   return res.json(customer.history)
+})
+
+app.get("/history/date", verifyAccountCPF, (req, res) => {
+  const {date} = req.query;
+  const {customer} = req;
+  const dateFormat = new Date(date + " 00:00");
+
+  const historyByDate = customer.history.filter((item) => item.created_at.toDateString() === new Date(dateFormat).toDateString());
+  return res.json(historyByDate);
 })
 
 app.post("/deposit", verifyAccountCPF, (req, res) => {
