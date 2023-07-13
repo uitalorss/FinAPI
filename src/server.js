@@ -101,3 +101,9 @@ app.put("/account", verifyAccountCPF, (req, res) => {
   customer.nome = name;
   return res.status(201).json({message: "Nome alterado com sucesso"});
 })
+
+app.delete("/account", verifyAccountCPF, (req, res) => {
+  const {customer} = req;
+  customers.splice(customer, 1);
+  return res.status(200).json({customers})
+})
