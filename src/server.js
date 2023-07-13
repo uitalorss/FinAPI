@@ -71,6 +71,12 @@ app.post("/deposit", verifyAccountCPF, (req, res) => {
   return res.status(201).send();
 })
 
+app.get("/account", verifyAccountCPF, (req, res) => {
+  const {customer} = req;
+  const saldo = getBalance(customer.history)
+  res.status(201).json(customer)
+})
+
 app.post("/withdraw", verifyAccountCPF, (req, res) => {
   const {description, amount} = req.body;
   const {customer} = req;
@@ -87,4 +93,11 @@ app.post("/withdraw", verifyAccountCPF, (req, res) => {
   };
   customer.history.push(withdraw);
   return res.status(201).json({message: "Saque efetuado com sucesso."});
+})
+
+app.put("/account", verifyAccountCPF, (req, res) => {
+  const {name} = req.body;
+  const {customer} = req;
+  customer.nome = name;
+  return res.status(201).json({message: "Nome alterado com sucesso"});
 })
