@@ -1,4 +1,4 @@
-import express, { request } from "express";
+import express, { request, response } from "express";
 import {v4 as uuidv4} from "uuid"
 
 const app = express();
@@ -38,3 +38,16 @@ app.get("/history", verifyAccountCPF, (req, res) => {
   return res.json(customer.history)
 })
 
+app.post("/deposit", verifyAccountCPF, (req, res) => {
+  const {description, amount} = req.body;
+  const {customer} = req;
+
+  const deposit = {
+    description,
+    amount,
+    created_at: new Date(),
+    type: 'deposit'
+  };
+  customer.history.push(deposit);
+  return res.status(201).send();
+})
