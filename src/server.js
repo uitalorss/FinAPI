@@ -18,6 +18,16 @@ function verifyAccountCPF(req, res, next){
   return next();
 }
 
+function getBalance(history){
+  return history.reduce((total, element) => {
+    if(element.type === 'deposit'){
+      return total + element.amount
+    }else{
+      return total - element.amount
+    }
+  }, 0)
+}
+
 app.post("/account", (req, res) => {
   const {cpf, nome} = req.body;
   const isCustomersExists = customers.some((customer) => customer.cpf === cpf)
@@ -50,4 +60,22 @@ app.post("/deposit", verifyAccountCPF, (req, res) => {
   };
   customer.history.push(deposit);
   return res.status(201).send();
+})
+
+app.post("/withdraw", verifyAccountCPF, (req, res) => {
+  const {description, amount} = req.body;
+  const {customer} = req;
+
+  const bankBalance = getBalance(customer.history);
+  if(amount > bankBalance){
+    return res.status(400).json({message: "Não é possível sacar um valor maior que o saldo atual"});
+  }
+  const withdraw = {
+    description,
+    amount,
+    created_at: new Date(),
+    type: "withdraw"
+  };
+  customer.history.push(withdraw);
+  return res.status(201).json({message: "Saque efetuado com sucesso."});
 })
