@@ -57,6 +57,18 @@ app.get("/history/date", verifyAccountCPF, (req, res) => {
   return res.json(historyByDate);
 })
 
+app.get("/account", verifyAccountCPF, (req, res) => {
+  const {customer} = req;
+  const saldo = getBalance(customer.history)
+  res.status(201).json(customer)
+})
+
+app.get("/balance", verifyAccountCPF, (req, res) => {
+  const {customer} = req;
+  const balance = getBalance(customer.history);
+  return res.status(200).json(balance);
+})
+
 app.post("/deposit", verifyAccountCPF, (req, res) => {
   const {description, amount} = req.body;
   const {customer} = req;
@@ -69,12 +81,6 @@ app.post("/deposit", verifyAccountCPF, (req, res) => {
   };
   customer.history.push(deposit);
   return res.status(201).send();
-})
-
-app.get("/account", verifyAccountCPF, (req, res) => {
-  const {customer} = req;
-  const saldo = getBalance(customer.history)
-  res.status(201).json(customer)
 })
 
 app.post("/withdraw", verifyAccountCPF, (req, res) => {
